@@ -1,0 +1,39 @@
+//Wiki Links v1.1
+//By IceColdFever, modified by Bale
+
+// This is meant to be imported by: desc_effects, desc_familiar, desc_item, desc_outfit, desc_skill
+
+// When an effect and skill have same name, need to differentiate. Effect has more useful information.
+boolean checkEffect(string name, string check) {
+	switch(check) {
+	case "effect":
+		if(name.to_effect().to_skill().to_string() == name)
+			return true;
+	case "skill":
+		if(name.to_skill().to_effect().to_string() == name)
+			return true;
+	}
+	return false;
+}
+
+buffer wikiLink(buffer results, string check) {
+	int start = index_of(results, "<b>");
+	int end = index_of(results, "</b>");
+	if(start < 0 || end < 0) // Generally this happens when the session lapses
+		return results;
+	string name = substring(results, start+3,end);
+	
+	if(checkEffect(name, check))
+		name += " (effect)";
+	
+	name = replace_string(name, " ", "_");
+	
+	results.insert(start, "<a target=_blank href=http://kol.coldfront.net/thekolwiki/index.php/"+name+">");
+	int new_end = index_of(results, "</b>");
+	results.insert(new_end + 4, "</a>");
+	return results;
+}
+
+buffer wikiLink(buffer results) {
+	return results.wikiLink("");
+}
