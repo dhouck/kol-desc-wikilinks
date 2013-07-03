@@ -28,7 +28,7 @@ buffer wikiLink(buffer results, string check) {
 	
 	name = replace_string(name, " ", "_");
 	
-	results.insert(start, "<a target=_blank href=http://kol.coldfront.net/thekolwiki/index.php/"+name+">");
+	results.insert(start, "<a href=javascript:window.open(\"http://kol.coldfront.net/thekolwiki/index.php/"+name+"\");window.close()>");
 	int new_end = index_of(results, "</b>");
 	results.insert(new_end + 4, "</a>");
 	return results;
