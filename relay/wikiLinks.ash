@@ -16,6 +16,12 @@ boolean checkEffect(string name, string check) {
 	return false;
 }
 
+void addLink(buffer results, int start, int end, string name) {
+	name = replace_string(name, " ", "_");
+	results.insert(end, "</a>");
+	results.insert(start, "<a href=javascript:window.open(\"http://kol.coldfront.net/thekolwiki/index.php/"+name+"\");window.close()>");
+}
+
 buffer wikiLink(buffer results, string check) {
 	int start = index_of(results, "<b>");
 	int end = index_of(results, "</b>");
@@ -26,11 +32,7 @@ buffer wikiLink(buffer results, string check) {
 	if(checkEffect(name, check))
 		name += " (effect)";
 	
-	name = replace_string(name, " ", "_");
-	
-	results.insert(start, "<a href=javascript:window.open(\"http://kol.coldfront.net/thekolwiki/index.php/"+name+"\");window.close()>");
-	int new_end = index_of(results, "</b>");
-	results.insert(new_end + 4, "</a>");
+	results.addLink(start, end + 4, name);
 	return results;
 }
 
