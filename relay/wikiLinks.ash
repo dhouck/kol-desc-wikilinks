@@ -29,7 +29,13 @@ buffer wikiLink(buffer results, string check) {
 		return results;
 	string name = substring(results, start+3,end);
 	
-	if(checkEffect(name, check))
+	if(name == "Blood Sugar Sauce Magic") {
+		if(check == "skill")
+			name += " (skill)";
+		else if(my_class() == $class[Sauceror])
+			name += " (Sauceror)";
+		else name += " (Offclass)";
+	} else if(checkEffect(name, check))
 		name += " (effect)";
 	
 	results.addLink(start, end + 4, name);
