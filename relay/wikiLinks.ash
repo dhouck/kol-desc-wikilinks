@@ -18,8 +18,9 @@ boolean checkEffect(string name, string check) {
 
 void addLink(buffer results, int start, int end, string name) {
 	name = replace_string(name, " ", "_");
+	name = replace_string(name, "&quot;", "%5C%22"); // Transforms " into /" because otherwise it inteferes with the javascript to close the window.
 	results.insert(end, "</a>");
-	results.insert(start, "<a href=javascript:window.open(\"http://kol.coldfront.net/thekolwiki/index.php/"+name+"\");window.close()>");
+	results.insert(start, '<a href=javascript:window.open("http://kol.coldfront.net/thekolwiki/index.php/'+name+'");window.close()>');
 }
 
 buffer wikiLink(buffer results, string check) {
