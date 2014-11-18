@@ -23,6 +23,18 @@ void addLink(buffer results, int start, int end, string name) {
 	results.insert(start, '<a href=javascript:window.open("http://kol.coldfront.net/thekolwiki/index.php/'+name+'");window.close()>');
 }
 
+void effect_desc(buffer results) {
+	// <br>Effect: <b><a class=nounder href="desc_effect.php?whicheffect=181bf7f091c34f97fa316ac3e5e8ce09" >Oiled-Up</a></b><br>
+	matcher potion = create_matcher('<br>Effect: <b><[^>]+>(.+?)</a></b><br>', results);
+	if(potion.find()) {
+		string mod = string_modifier(potion.group(1), "Evaluated Modifiers");
+		if(length(mod) > 0)
+			results.insert(potion.end(0), "<div style='margin-left:15px; "
+				+ (create_matcher("<blockquote>.+?<p>.+?</blockquote>", results).find()? "margin-top: -12px; ": "")  // This compensates for KoL's bad HTML. Urgh!
+				+ "color:blue'>"+ replace_string(mod, ",", "<br>") +"</div>");
+	}
+}
+
 buffer wikiLink(buffer results, string check) {
 	int start = index_of(results, "<b>");
 	int end = index_of(results, "</b>");
@@ -40,6 +52,7 @@ buffer wikiLink(buffer results, string check) {
 		name += " (effect)";
 	
 	results.addLink(start, end + 4, name);
+	results.effect_desc();
 	return results;
 }
 
