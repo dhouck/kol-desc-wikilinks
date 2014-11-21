@@ -33,7 +33,7 @@ buffer format_mod(string ef) {
 			results.append("<br>");
 		if(s.contains_text("+"))
 			s = s.replace_string(":", "");
-		parse = create_matcher("(Drop|Initiative|Percent): .\\d+", s);
+		parse = create_matcher("(Drop|Initiative|Percent):? .\\d+", s);
 		if(parse.find()) {
 			if(parse.group(1) == "Percent")
 				results.append(s.replace_string(" Percent", ""));
