@@ -23,40 +23,46 @@ void addLink(buffer results, int start, int end, string name) {
 	results.insert(start, '<a href=javascript:window.open("http://kol.coldfront.net/thekolwiki/index.php/'+name+'");window.close()>');
 }
 
-// Minor formatting to make effect modifiers slightly prettier.
-buffer format_mod(string ef) {
-	string [int] mods = ef.split_string(", ");
-	matcher parse;
-	buffer results;
-	foreach x,s in mods {
-		if(length(results) > 0)
-			results.append("<br>");
-		if(s.contains_text("+"))
-			s = s.replace_string(":", "");
-		parse = create_matcher("(Drop|Initiative|Percent):? .\\d+", s);
-		if(parse.find()) {
-			if(parse.group(1) == "Percent")
-				results.append(s.replace_string(" Percent", ""));
-			else
-				results.append(s);
-			results.append("%");
-		} else
-			results.append(s);
-	}
-	return results;
-}
-
 void effect_desc(buffer results) {
 	// <br>Effect: <b><a class=nounder href="desc_effect.php?whicheffect=181bf7f091c34f97fa316ac3e5e8ce09" >Oiled-Up</a></b><br>
 	matcher potion = create_matcher('<br>Effect: <b><[^>]+>(.+?)</a></b><br>', results);
 	if(potion.find()) {
 		string mod = string_modifier(potion.group(1), "Evaluated Modifiers");
-		if(length(mod) > 0)
-			results.insert(potion.end(0), "<p style='font-size:89%; color:#5858FA; font-weight:bold; text-align:center; border:solid 1px DarkBlue; display:inline-block; padding:3px; margin-left:15px; margin-bottom:2px; "
-				+ (create_matcher("<blockquote>.+?<p>.+?</blockquote>", results).find()? "margin-top: -10px'>": "margin-top: 2px'>")  // This compensates for KoL's bad HTML. Urgh!
-				+ format_mod(mod) 
-				+ "</p><br>");
+		if(length(mod) > 0) {
+			// Do a little formatting to mod before inserting it into the desc
+			buffer eff;
+			eff.append("<p style='font-size:89%; color:#5858FA; font-weight:bold; text-align:center; border:solid 1px DarkBlue; display:inline-block; padding:3px; margin-left:15px; margin-bottom:2px; ");
+			if(create_matcher("<blockquote>.+?<p>.+?</blockquote>", results).find())
+				eff.append("margin-top: -10px'>");   // This compensates for KoL's bad HTML. Urgh!
+			else eff.append("margin-top: 2px'>");
+			matcher parse;
+			foreach x,s in mod.split_string(", ") {
+				if(x > 0)
+					eff.append("<br>");
+				if(s.contains_text("+") || s.contains_text("-"))
+					s = s.replace_string(":", "");
+				parse = create_matcher("(Drop|Initiative|Percent):? .?\\d+", s);
+				if(parse.find()) {
+					if(parse.group(1) == "Percent")
+						eff.append(s.replace_string(" Percent", ""));
+					else
+						eff.append(s);
+					eff.append("%");
+				} else
+					eff.append(s);
+			}
+			eff.append("</p><br>");
+			results.insert(potion.end(0), eff);
+		}
 	}
+}
+
+// Was being messed up by the tags in ectoplasm <i>au jus</i>
+string strip_tags(string name) {
+	matcher tags = create_matcher("(?i)<([A-Z][A-Z0-9]*)\\b[^>]*>(.*?)</\\1>", name);
+	if(tags.find())
+		name = tags.replace_all(tags.group(2));
+	return name.entity_encode();
 }
 
 buffer wikiLink(buffer results, string check) {
@@ -75,7 +81,7 @@ buffer wikiLink(buffer results, string check) {
 	} else if(checkEffect(name, check))
 		name += " (effect)";
 	
-	results.addLink(start, end + 4, name);
+	results.addLink(start, end + 4, strip_tags(name));
 	results.effect_desc();
 	return results;
 }
