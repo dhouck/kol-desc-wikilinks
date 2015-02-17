@@ -5,5 +5,5 @@ import "wikiLinks.ash";
 
 void main()
 {
-	wikiLink(visit_url()).write();
+	visit_url().wikiLink().write();
 }

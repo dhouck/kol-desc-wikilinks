@@ -23,16 +23,25 @@ void addLink(buffer results, int start, int end, string name) {
 	results.insert(start, '<a href=javascript:window.open("http://kol.coldfront.net/thekolwiki/index.php/'+name+'");window.close()>');
 }
 
+string extraMods(string eff) {
+	switch(eff) {
+	case "Purr of the Feline": return "Makes Ed's Servants Stronger";
+	case "Shield of the Pastalord": return "Reduces physical damage taken by " +(my_class() == $class[Pastamancer]? "30%": "10%");
+	}
+	return "";
+}
+
 void effect_desc(buffer results) {
 	// <br>Effect: <b><a class=nounder href="desc_effect.php?whicheffect=181bf7f091c34f97fa316ac3e5e8ce09" >Oiled-Up</a></b><br>
-	matcher potion = create_matcher('<br>Effect: <b><[^>]+>(.+?)</a></b><br>', results);
+	matcher potion = create_matcher('(?:<br>|<p><Center>Gives )Effect: <b><[^>]+>(.+?)</a></b>', results);
 	if(potion.find()) {
 		string mod = string_modifier(potion.group(1), "Evaluated Modifiers");
+		if(length(mod) == 0) mod = extraMods(potion.group(1));
 		if(length(mod) > 0) {
 			// Do a little formatting to mod before inserting it into the desc
 			buffer eff;
-			eff.append("<p style='font-size:89%; color:#5858FA; font-weight:bold; text-align:center; border:solid 1px DarkBlue; display:inline-block; padding:3px; margin-left:15px; margin-bottom:2px; ");
-			if(create_matcher("<blockquote>.+?<p>.+?</blockquote>", results).find())
+			eff.append("<br><p style='font-size:89%; color:#5858FA; font-weight:bold; text-align:center; border:solid 1px DarkBlue; display:inline-block; padding:3px; margin-left:15px; margin-bottom:2px; ");
+			if(create_matcher("<blockquote>.+?<p>(?!<center><b><font color=blue>).+?</blockquote>", results).find())
 				eff.append("margin-top: -10px'>");   // This compensates for KoL's bad HTML. Urgh!
 			else eff.append("margin-top: 2px'>");
 			matcher parse;
@@ -51,7 +60,7 @@ void effect_desc(buffer results) {
 				} else
 					eff.append(s);
 			}
-			eff.append("</p><br>");
+			eff.append("</p>");
 			results.insert(potion.end(0), eff);
 		}
 	}
