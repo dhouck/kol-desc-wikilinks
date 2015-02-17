@@ -27,6 +27,10 @@ string extraMods(string eff) {
 	switch(eff) {
 	case "Purr of the Feline": return "Makes Ed's Servants Stronger";
 	case "Shield of the Pastalord": return "Reduces physical damage taken by " +(my_class() == $class[Pastamancer]? "30%": "10%");
+	case "Knob Goblin Perfume": return "You smell like a Knob Goblin harem girl!";
+	case "Mathematically Precise": return "Combat items deal 50% more damage";
+	case "Ruthlessly Efficient": return "Deleveling is 50% more effective";
+	case "Frigidalmatian": return "Bites your foes";
 	}
 	return "";
 }
@@ -40,10 +44,8 @@ void effect_desc(buffer results) {
 		if(length(mod) > 0) {
 			// Do a little formatting to mod before inserting it into the desc
 			buffer eff;
-			eff.append("<br><p style='font-size:89%; color:#5858FA; font-weight:bold; text-align:center; border:solid 1px DarkBlue; display:inline-block; padding:3px; margin-left:15px; margin-bottom:2px; ");
-			if(create_matcher("<blockquote>.+?<p>(?!<center><b><font color=blue>).+?</blockquote>", results).find())
-				eff.append("margin-top: -10px'>");   // This compensates for KoL's bad HTML. Urgh!
-			else eff.append("margin-top: 2px'>");
+			eff.append("</p><br><p style='font-size:89%; color:#5858FA; font-weight:bold; text-align:center; border:solid 1px DarkBlue; display:inline-block; padding:3px; margin-left:15px; margin-bottom:2px; margin-top: -25px'>");
+				// The </p> and margin-top: -25px compensates for KoL's bad HTML. Urgh!
 			matcher parse;
 			foreach x,s in mod.split_string(", ") {
 				if(x > 0)
