@@ -22,55 +22,8 @@ void addLink(buffer results, int start, int end, string name) {
 	name = replace_string(name, " ", "_");
 	name = replace_string(name, "&quot;", "%5C%22"); // Transforms " into /" because otherwise it inteferes with the javascript to close the window.
 	results.insert(end, "</a>");
-	results.insert(start, '<a href=javascript:window.open("http://kol.coldfront.net/thekolwiki/index.php/'+name+'");window.close()>');
-}
+	results.insert(start, '<a href=javascript:window.open("http://kol.coldfront.net/thekolwiki/index.php/'+name+'");window.close();>');
 
-void insert_mods(buffer results, string target, int x) {
-	string extraMods(string eff) {
-		switch(eff) {
-		case "Purr of the Feline": return "Makes Ed's Servants Stronger";
-		case "Shield of the Pastalord": return "Reduces physical damage taken by " +(my_class() == $class[Pastamancer]? "30%": "10%");
-		case "Knob Goblin Perfume": return "You smell like a Knob Goblin harem girl!";
-		case "Mathematically Precise": return "Combat items deal 50% more damage";
-		case "Ruthlessly Efficient": return "Deleveling is 50% more effective";
-		case "Frigidalmatian": return "Bites your foes";
-		}
-		return "";
-	}
-
-	string mod = string_modifier("Effect:" + target, "Evaluated Modifiers");
-	if(length(mod) == 0) mod = extraMods(target);
-	if(length(mod) > 0) {
-		// Do a little formatting to mod before inserting it into the desc
-		buffer eff;
-		eff.append("</p><br><p style='font-size:89%; color:#5858FA; font-weight:bold; text-align:center; border:solid 1px DarkBlue; display:inline-block; padding:3px; margin-left:15px; margin-bottom:2px; margin-top: -25px'>");
-			// The </p> and margin-top: -25px compensates for KoL's bad HTML. Urgh!
-		matcher parse;
-		foreach x,s in mod.split_string(", ") {
-			if(x > 0)
-				eff.append("<br>");
-			if(s.contains_text("+") || s.contains_text("-"))
-				s = s.replace_string(":", "");
-			parse = create_matcher("(Drop|Initiative|Percent):? .?\\d+", s);
-			if(parse.find()) {
-				if(parse.group(1) == "Percent")
-					eff.append(s.replace_string(" Percent", ""));
-				else
-					eff.append(s);
-				eff.append("%");
-			} else
-				eff.append(s);
-		}
-		eff.append("</p>");
-		results.insert(x, eff);
-	}
-}
-
-void effect_desc(buffer results) {
-	// <br>Effect: <b><a class=nounder href="desc_effect.php?whicheffect=181bf7f091c34f97fa316ac3e5e8ce09" >Oiled-Up</a></b><br>
-	matcher potion = create_matcher('(?:<br>|<p><Center>Gives )Effect: <b><[^>]+>(.+?)</a></b>', results);
-	if(potion.find())
-		results.insert_mods(potion.group(1), potion.end(0));
 }
 
 // Was being messed up by the tags in ectoplasm <i>au jus</i>
@@ -98,7 +51,6 @@ buffer wikiLink(buffer results, string check) {
 		name += " (effect)";
 	
 	results.addLink(start, end + 4, strip_tags(name));
-	results.effect_desc();
 	return results;
 }
 
