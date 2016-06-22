@@ -11,6 +11,7 @@ boolean checkEffect(string name, string check) {
 	case "effect":
 		if(name.to_effect().to_skill().to_string() == name)
 			return true;
+		break;
 	case "skill":
 		if(name.to_skill().to_effect().to_string() == name)
 			return true;
@@ -18,20 +19,22 @@ boolean checkEffect(string name, string check) {
 	return false;
 }
 
-void addLink(buffer results, int start, int end, string name) {
-	name = replace_string(name, " ", "_");
-	name = replace_string(name, "&quot;", "%5C%22"); // Transforms " into /" because otherwise it inteferes with the javascript to close the window.
-	results.insert(end, "</a>");
-	results.insert(start, '<a href=javascript:window.open("http://kol.coldfront.net/thekolwiki/index.php/'+name+'");window.close();>');
-
-}
-
 // Was being messed up by the tags in ectoplasm <i>au jus</i>
 string strip_tags(string name) {
 	matcher tags = create_matcher("(?i)<([A-Z][A-Z0-9]*)\\b[^>]*>(.*?)</\\1>", name);
 	if(tags.find())
 		name = tags.replace_all(tags.group(2));
-	return name.entity_encode();
+	return name;
+}
+
+void addLink(buffer results, int start, int end, string name) {
+	name = strip_tags(name);
+	name = entity_decode(name).url_encode();  // Make things like Jalapeño Saucesphere safe for the wiki
+	name = replace_string(name, "+", "_");    // spaces become + because of url_decode(). The wiki needs _ for spaces.
+	# name = replace_string(name, "&quot;", "%5C%22"); // Transforms " into /" because otherwise it inteferes with the javascript to close the window.
+	results.insert(end, "</a>");
+	results.insert(start, '<a href=javascript:window.open("http://kol.coldfront.net/thekolwiki/index.php/'+name+'");window.close();>');
+	# results.insert(start, '<a target=_blank href="http://kol.coldfront.net/thekolwiki/index.php/'+name+'">');
 }
 
 buffer wikiLink(buffer results, string check) {
@@ -50,7 +53,7 @@ buffer wikiLink(buffer results, string check) {
 	} else if(checkEffect(name, check))
 		name += " (effect)";
 	
-	results.addLink(start, end + 4, strip_tags(name));
+	results.addLink(start, end + 4, name);
 	return results;
 }
 
