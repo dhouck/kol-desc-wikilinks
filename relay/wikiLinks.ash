@@ -32,9 +32,9 @@ void addLink(buffer results, int start, int end, string name) {
 	name = entity_decode(name).url_encode();  // Make things like Jalapeño Saucesphere safe for the wiki
 	name = replace_string(name, "+", "_");    // spaces become + because of url_decode(). The wiki needs _ for spaces.
 	name = replace_string(name, "%22", "%5C%22"); // Transforms " into /" because otherwise it inteferes with the javascript to close the window.
-	results.insert(end, "</a>");
-	results.insert(start, '<a href=javascript:window.open("http://kol.coldfront.net/thekolwiki/index.php/'+name+'");window.close();>');
-	# results.insert(start, '<a target=_blank href="http://kol.coldfront.net/thekolwiki/index.php/'+name+'">');
+	results.insert(end, "</u></a>");
+	# results.insert(start, '<a href=javascript:window.open("http://kol.coldfront.net/thekolwiki/index.php/'+name+'");window.close();>');
+	results.insert(start, '<u><a class="hand" style="cursor: pointer;" onclick=\'window.open("http://kol.coldfront.net/thekolwiki/index.php/'+name+'", "_blank");window.close();\'>');
 }
 
 buffer wikiLink(buffer results, string check) {
