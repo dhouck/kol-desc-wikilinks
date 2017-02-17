@@ -4,7 +4,7 @@
 import "wikiLinks.ash";
 
 boolean is_absorbable(item it) {
-    return it.gift || (it.tradeable && it.discardable && !it.quest);
+    return (it.gift || it.tradeable) && it.discardable; #  && !it.quest
 }
 
 buffer Gelatinous(buffer results) {
