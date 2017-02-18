@@ -15,7 +15,7 @@ buffer Gelatinous(buffer results) {
 		if(start > 0 && end > 0) {
 			item it = to_item(substring(results, start + 7, end));
 			if(is_absorbable(it) && (start = index_of(results, "</blockquote>")) > 0) {
-				if(to_slot(it) == $slot[none]) {
+				if($slots[none, familiar] contains to_slot(it)) {
 					skill noob = to_skill(to_int(it.descid) % 125 + 23001);
 					buffer desc;
 					if(have_skill(noob))
