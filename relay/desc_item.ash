@@ -5,7 +5,7 @@ import "wikiLinks.ash";
 
 boolean is_absorbable(item it) {
 	if($items[interesting clod of dirt, dirty bottlecap, discarded button] contains it) return true;
-    return (it.gift || it.tradeable) && it.discardable; #  && !it.quest
+	return (it.gift || it.tradeable) && it.discardable; #  && !it.quest
 }
 
 buffer Gelatinous(buffer results) {
@@ -16,7 +16,8 @@ buffer Gelatinous(buffer results) {
 			item it = to_item(substring(results, start + 7, end));
 			if(is_absorbable(it) && (start = index_of(results, "</blockquote>")) > 0) {
 				if($slots[none, familiar] contains to_slot(it)) {
-					skill noob = to_skill(to_int(it.descid) % 125 + 23001);
+					# skill noob = to_skill(to_int(it.descid) % 125 + 23001);
+					skill noob = it.noob_skill;  // formula doesn't work for all items, specifically Robortender drops
 					buffer desc;
 					if(have_skill(noob))
 						desc.append('<s>');
