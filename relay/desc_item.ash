@@ -8,6 +8,7 @@ boolean is_absorbable(item it) {
 	return (it.gift || it.tradeable) && it.discardable; #  && !it.quest
 }
 
+// Add absorption skill learned for Gelatinous Noob ascensions.
 buffer Gelatinous(buffer results) {
 	if(my_path() == "Gelatinous Noob") {
 		int start = index_of(results, ");'><b>");
@@ -40,7 +41,17 @@ buffer Gelatinous(buffer results) {
 	return results;
 }
 
+// Pantogram Pants have a procedurally generated name, so need to set wiki page manually.
+buffer pantogram(buffer results) {
+	if(results.contains_text("<blockquote>These pants were summoned from the pits of hell")) {
+		matcher pants = create_matcher("index\.php/[^\"]+", results);
+		if(pants.find())
+			return results.replace_string(pants.group(0), "index.php/Pantogram_pants");
+	}
+	return results;
+}
+
 void main()
 {
-	visit_url().wikiLink().Gelatinous().write();
+	visit_url().wikiLink().Gelatinous().pantogram().write();
 }
