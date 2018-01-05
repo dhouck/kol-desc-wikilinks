@@ -51,7 +51,20 @@ buffer pantogram(buffer results) {
 	return results;
 }
 
+// This is for making it obvious that Level 13+ requirements actually "can not use in Ronin/Hardcore"
+buffer lvl_limit(buffer results) {
+	matcher level = create_matcher("Level required:\\s+(?:<b>)?(\\d+)", results);
+	if(level.find() && level.group(1).to_int() >= 13)
+		results.insert(index_of(results, level.group(0))+ level.group(0).length(), '<br/>&nbsp; &nbsp; (Not usable in Ronin / Hardcore)');
+	return results;
+}
+
 void main()
 {
-	visit_url().wikiLink().Gelatinous().pantogram().write();
+	visit_url()
+		.wikiLink()
+		.Gelatinous()
+		.pantogram()
+		.lvl_limit()
+	.write();
 }
