@@ -33,8 +33,8 @@ void addLink(buffer results, int start, int end, string name) {
 	name = replace_string(name, "+", "_");    // spaces become + because of url_decode(). The wiki needs _ for spaces.
 	name = replace_string(name, "%22", "%5C%22"); // Transforms " into /" because otherwise it inteferes with the javascript to close the window.
 	results.insert(end, "</u></a>");
-	# results.insert(start, '<a href=javascript:window.open("http://kol.coldfront.net/thekolwiki/index.php/'+name+'");window.close();>');
-	results.insert(start, '<u><a class="hand" style="cursor: pointer;" onclick=\'window.open("http://kol.coldfront.net/thekolwiki/index.php/'+name+'", "_blank");window.close();\'>');
+	# results.insert(start, '<a href=javascript:window.open("https://wiki.kingdomofloathing.com/'+name+'");window.close();>');
+	results.insert(start, '<u><a class="hand" style="cursor: pointer;" onclick=\'window.open("https://wiki.kingdomofloathing.com/'+name+'", "_blank");window.close();\'>');
 }
 
 buffer wikiLink(buffer results, string check) {
